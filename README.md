@@ -10,11 +10,16 @@ This library provides an abstraction to search for torrent files accross some to
 ```php
 <?php
 
-$scraperService = new \Xurumelous\TorrentScraper\TorrentScrapperService(['ezTv', 'kickassTorrents']);
+require 'vendor/autoload.php';
+use Xurumelous\TorrentScraper\TorrentScraperService;
+
+date_default_timezone_set('UTC');
+
+$scraperService = new TorrentScraperService(['ezTv', 'ThePirateBay']);
 $results = $scraperService->search('elementaryos');
 
 foreach ($results as $result) {
-	$result->getName();
+    $result->getName();
     $result->getSeeders();
     $result->getLeechers();
     $result->getTorrentUrl();
