@@ -30,7 +30,7 @@ class ThePirateBayAdapter implements AdapterInterface
     {
         $url = 'https://thepiratebay.se/search/'.urlencode($query).'/0/7/0';
 
-        return $this->httpClient->requestAsync('GET', $url, $options)->then(function ($response) {
+        return $this->httpClient->requestAsync('GET', $url, $this->options)->then(function ($response) {
           return (string) $response->getBody();
         })->then(function ($htmlBody) {
           return Self::parseResponse($htmlBody);

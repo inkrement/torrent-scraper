@@ -21,9 +21,7 @@ class EzTvAdapter implements AdapterInterface
      */
     public function __construct(array $options = [])
     {
-        $defaults = ['seeders' => 1, 'leechers' => 1];
-
-        $this->options = array_merge($defaults, $options);
+        $this->options = $options;
     }
 
     /**
@@ -35,7 +33,7 @@ class EzTvAdapter implements AdapterInterface
     {
         $url = 'https://eztv.ag/search/'.$this->transformSearchString($query);
 
-        return $this->httpClient->requestAsync('GET', $url)->then(function ($response) {
+        return $this->httpClient->requestAsync('GET', $url, $this->options)->then(function ($response) {
           return (string) $response->getBody();
         })->then(function ($htmlBody) {
           return Self::parseResponse($htmlBody);
