@@ -36,9 +36,9 @@ class EzTvBayAdapterTest extends \PHPUnit_Framework_TestCase
         $expected = 'marvel-s-agents-of-s-h-i-e-l-d-';
 
         $adapter = new EzTvAdapter();
-        
+
         $actual = $adapter->transformSearchString('Marvel\'s Agents of S.H.I.E.L.D.');
-        
+
         $this->assertEquals($expected, $actual);
     }
 
@@ -82,7 +82,7 @@ class EzTvBayAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $uri = 'https://eztv.ag/search/the-walking-dead-s05e08';
 
-        $client = $this->getMock(Client::class);
+        $client = $this->createMock(Client::class);
         $client->expects($this->once())
             ->method('__call')
             ->with('get', [$uri])
@@ -99,7 +99,7 @@ class EzTvBayAdapterTest extends \PHPUnit_Framework_TestCase
     protected function getMockRawResult()
     {
         if (!$this->rawResultCache) {
-            $this->rawResultCache = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'eztv_result.html');
+            $this->rawResultCache = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'eztv_result.html');
         }
 
         return $this->rawResultCache;

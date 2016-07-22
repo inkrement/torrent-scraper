@@ -69,9 +69,9 @@ class ThePirateBayAdapterTest extends \PHPUnit_Framework_TestCase
 
     public function testIsHandlingExceptionOnNotFound()
     {
-        $uri = 'https://thepiratebay.se/search/' . urlencode('The Walking Dead S05E08') . '/0/7/0';
+        $uri = 'https://thepiratebay.se/search/'.urlencode('The Walking Dead S05E08').'/0/7/0';
 
-        $client = $this->getMock(Client::class);
+        $client = $this->createMock(Client::class);
         $client->expects($this->once())
             ->method('__call')
             ->with('get', [$uri])
@@ -88,7 +88,7 @@ class ThePirateBayAdapterTest extends \PHPUnit_Framework_TestCase
     protected function getMockRawResult()
     {
         if (!$this->rawResultCache) {
-            $this->rawResultCache = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'the_pirate_bay_result.html');
+            $this->rawResultCache = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'the_pirate_bay_result.html');
         }
 
         return $this->rawResultCache;
