@@ -1,5 +1,5 @@
 {
-  "name": "xurumelous/torrent-scraper",
+  "name": "inkrement/torrent-scraper",
   "description": "Provide an abstraction to seach for torrent files on many websites.",
   "keywords": [
     "torrent",
@@ -9,6 +9,12 @@
   "license": "MIT",
   "homepage": "https://github.com/xurumelous/torrent-scraper",
   "authors": [
+    {
+      "name": "Christian Hotz-Behofsits",
+      "email": "chris.hotz.behofsits@gmail.com",
+      "homepage": "http://justrocketscience.com",
+      "role": "Developer"
+    },
     {
       "name": "Fernando Carletti",
       "email": "contato@fernandocarletti.net",
