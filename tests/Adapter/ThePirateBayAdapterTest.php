@@ -1,11 +1,11 @@
 <?php
 
-namespace Xurumelous\TorrentScraper;
+namespace Inkrement\TorrentScraper;
 
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Psr7\Request;
-use Xurumelous\TorrentScraper\Adapter\ThePirateBayAdapter;
-use Xurumelous\TorrentScraper\Entity\SearchResult;
+use Inkrement\TorrentScraper\Adapter\ThePirateBayAdapter;
+use Inkrement\TorrentScraper\Entity\SearchResult;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
@@ -18,7 +18,7 @@ class ThePirateBayAdapterTest extends \PHPUnit_Framework_TestCase
     {
         $adapter = new ThePirateBayAdapter();
 
-        $this->assertInstanceOf('\Xurumelous\TorrentScraper\AdapterInterface', $adapter);
+        $this->assertInstanceOf('\Inkrement\TorrentScraper\AdapterInterface', $adapter);
     }
 
     public function testIsGettingAndSettingHttpClient()

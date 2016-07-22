@@ -1,11 +1,11 @@
 <?php
 
-namespace Xurumelous\TorrentScraper\Adapter;
+namespace Inkrement\TorrentScraper\Adapter;
 
 use GuzzleHttp\Exception\ClientException;
-use Xurumelous\TorrentScraper\AdapterInterface;
-use Xurumelous\TorrentScraper\HttpClientAware;
-use Xurumelous\TorrentScraper\Entity\SearchResult;
+use Inkrement\TorrentScraper\AdapterInterface;
+use Inkrement\TorrentScraper\HttpClientAware;
+use Inkrement\TorrentScraper\Entity\SearchResult;
 use Symfony\Component\DomCrawler\Crawler;
 
 class EzTvAdapter implements AdapterInterface
@@ -29,16 +29,17 @@ class EzTvAdapter implements AdapterInterface
 
     /**
      * @param string $query
+     *
      * @return SearchResult[]
      */
     public function search($query)
     {
         try {
-            $response = $this->httpClient->get('https://eztv.ag/search/' . $this->transformSearchString($query));
+            $response = $this->httpClient->get('https://eztv.ag/search/'.$this->transformSearchString($query));
         } catch (ClientException $e) {
             return [];
         }
-        
+
         $crawler = new Crawler((string) $response->getBody());
         $items = $crawler->filter('tr.forum_header_border');
         $results = [];
@@ -70,6 +71,7 @@ class EzTvAdapter implements AdapterInterface
      * Transform every non alphanumeric character into a dash.
      *
      * @param string $searchString
+     *
      * @return mixed
      */
     public function transformSearchString($searchString)

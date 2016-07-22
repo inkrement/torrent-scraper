@@ -1,11 +1,11 @@
 <?php
 
-namespace Xurumelous\TorrentScraper\Adapter;
+namespace Inkrement\TorrentScraper\Adapter;
 
 use GuzzleHttp\Exception\ClientException;
-use Xurumelous\TorrentScraper\AdapterInterface;
-use Xurumelous\TorrentScraper\HttpClientAware;
-use Xurumelous\TorrentScraper\Entity\SearchResult;
+use Inkrement\TorrentScraper\AdapterInterface;
+use Inkrement\TorrentScraper\HttpClientAware;
+use Inkrement\TorrentScraper\Entity\SearchResult;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ThePirateBayAdapter implements AdapterInterface
@@ -17,21 +17,21 @@ class ThePirateBayAdapter implements AdapterInterface
      */
     public function __construct(array $options = [])
     {
-
     }
 
     /**
      * @param string $query
+     *
      * @return SearchResult[]
      */
     public function search($query)
     {
         try {
-            $response = $this->httpClient->get('https://thepiratebay.se/search/' . urlencode($query) . '/0/7/0');
+            $response = $this->httpClient->get('https://thepiratebay.se/search/'.urlencode($query).'/0/7/0');
         } catch (ClientException $e) {
             return [];
         }
-        
+
         $crawler = new Crawler((string) $response->getBody());
         $items = $crawler->filter('#searchResult tr');
         $results = [];

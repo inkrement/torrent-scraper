@@ -1,8 +1,8 @@
 <?php
 
-namespace Xurumelous\TorrentScraper;
+namespace Inkrement\TorrentScraper;
 
-use Xurumelous\TorrentScraper\Entity\SearchResult;
+use Inkrement\TorrentScraper\Entity\SearchResult;
 
 class TorrentScraperServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -11,19 +11,19 @@ class TorrentScraperServiceTest extends \PHPUnit_Framework_TestCase
         $service = new TorrentScraperService(['null']);
         $actual = $service->getAdapters();
 
-        $this->assertInstanceOf('\Xurumelous\TorrentScraper\Adapter\NullAdapter', $actual[0]);
+        $this->assertInstanceOf('\Inkrement\TorrentScraper\Adapter\NullAdapter', $actual[0]);
     }
 
     public function testIsSearchingInTheAdapters()
     {
         $expected = [new SearchResult()];
-        $adapter1 = $this->getMock('Xurumelous\TorrentScraper\AdapterInterface');
+        $adapter1 = $this->getMock('Inkrement\TorrentScraper\AdapterInterface');
         $adapter1->expects($this->once())
             ->method('search')
             ->with('The Walking Dead S05E08')
             ->willReturn($expected);
 
-        $adapter2 = $this->getMock('Xurumelous\TorrentScraper\AdapterInterface');
+        $adapter2 = $this->getMock('Inkrement\TorrentScraper\AdapterInterface');
         $adapter2->expects($this->once())
             ->method('search')
             ->with('The Walking Dead S05E08')
@@ -40,7 +40,7 @@ class TorrentScraperServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testIsHttpClientBeingSet()
     {
-        $adapterMock = $this->getMock('Xurumelous\TorrentScraper\AdapterInterface');
+        $adapterMock = $this->getMock('Inkrement\TorrentScraper\AdapterInterface');
         $adapterMock->expects($this->once())
             ->method('setHttpClient')
             ->with(new \GuzzleHttp\Client());

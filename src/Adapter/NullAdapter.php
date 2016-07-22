@@ -1,8 +1,8 @@
 <?php
 
-namespace Xurumelous\TorrentScraper\Adapter;
+namespace Inkrement\TorrentScraper\Adapter;
 
-use Xurumelous\TorrentScraper\AdapterInterface;
+use Inkrement\TorrentScraper\AdapterInterface;
 
 class NullAdapter implements AdapterInterface
 {
@@ -20,6 +20,6 @@ class NullAdapter implements AdapterInterface
 
     public function search($query)
     {
-       return [];
+        return [];
     }
 }

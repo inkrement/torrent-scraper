@@ -11,7 +11,7 @@ This library provides an abstraction to search for torrent files accross some to
 <?php
 
 require 'vendor/autoload.php';
-use Xurumelous\TorrentScraper\TorrentScraperService;
+use Inkrement\TorrentScraper\TorrentScraperService;
 
 date_default_timezone_set('UTC');
 

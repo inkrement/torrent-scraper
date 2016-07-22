@@ -1,8 +1,8 @@
 <?php
 
-namespace Xurumelous\TorrentScraper;
+namespace Inkrement\TorrentScraper;
 
-use Xurumelous\TorrentScraper\Entity\SearchResult;
+use Inkrement\TorrentScraper\Entity\SearchResult;
 
 class TorrentScraperService
 {
@@ -18,7 +18,7 @@ class TorrentScraperService
     public function __construct(array $adapters, $options = [])
     {
         foreach ($adapters as $adapter) {
-            $adapterName = __NAMESPACE__ . '\\Adapter\\' . ucfirst($adapter) . 'Adapter';
+            $adapterName = __NAMESPACE__.'\\Adapter\\'.ucfirst($adapter).'Adapter';
             $this->addAdapter(new $adapterName($options));
         }
     }
@@ -28,8 +28,7 @@ class TorrentScraperService
      */
     public function addAdapter(AdapterInterface $adapter)
     {
-        if (!$adapter->getHttpClient())
-        {
+        if (!$adapter->getHttpClient()) {
             $adapter->setHttpClient(new \GuzzleHttp\Client());
         }
 
@@ -46,6 +45,7 @@ class TorrentScraperService
 
     /**
      * @param string $query
+     *
      * @return SearchResult[]
      */
     public function search($query)

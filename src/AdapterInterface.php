@@ -1,6 +1,6 @@
 <?php
 
-namespace Xurumelous\TorrentScraper;
+namespace Inkrement\TorrentScraper;
 
 interface AdapterInterface
 {
@@ -12,21 +12,21 @@ interface AdapterInterface
     public function __construct(array $options);
 
     /**
-     * Set the Guzzle client instance
+     * Set the Guzzle client instance.
      *
      * @param \GuzzleHttp\Client $httpClient
      */
     public function setHttpClient(\GuzzleHttp\Client $httpClient);
 
     /**
-     * Get Guzzle client
+     * Get Guzzle client.
      *
      * @return \GuzzleHttp\Client
      */
     public function getHttpClient();
 
     /**
-     * Perform the search
+     * Perform the search.
      *
      * @param string $query
      */

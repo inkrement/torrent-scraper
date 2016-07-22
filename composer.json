@@ -35,12 +35,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Xurumelous\\TorrentScraper\\": "src"
+      "Inkrement\\TorrentScraper\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Xurumelous\\TorrentScraper\\": "tests"
+      "Inkrement\\TorrentScraper\\": "tests"
     }
   }
 }
