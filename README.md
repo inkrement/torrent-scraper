@@ -1,9 +1,6 @@
 Torrent Scraper
 ===============
-This library is based on [Fernando Carlétti`s](https://github.com/xurumelous/torrent-scraper) torrent-scraper.
-
-## About
-This library provides an abstraction to search for torrent files across some torrent websites.
+This library is based on [Fernando Carlétti`s](https://github.com/xurumelous/torrent-scraper) torrent-scraper. It provides an abstraction to search for torrent files across some torrent websites.
 
 ## Usage
 
