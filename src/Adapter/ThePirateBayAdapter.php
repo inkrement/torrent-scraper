@@ -2,7 +2,6 @@
 
 namespace Inkrement\TorrentScraper\Adapter;
 
-use GuzzleHttp\Exception\ClientException;
 use Inkrement\TorrentScraper\AdapterInterface;
 use Inkrement\TorrentScraper\HttpClientAware;
 use Inkrement\TorrentScraper\Entity\SearchResult;
@@ -12,37 +11,52 @@ class ThePirateBayAdapter implements AdapterInterface
 {
     use HttpClientAware;
 
+    private $options;
+
     /**
      * @param array $options
      */
     public function __construct(array $options = [])
     {
+        $this->options = $options;
     }
 
     /**
      * @param string $query
      *
-     * @return SearchResult[]
+     * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function search($query)
     {
-        try {
-            $response = $this->httpClient->get('https://thepiratebay.se/search/'.urlencode($query).'/0/7/0');
-        } catch (ClientException $e) {
-            return [];
-        }
+        $url = 'https://thepiratebay.se/search/'.urlencode($query).'/0/7/0';
 
-        $crawler = new Crawler((string) $response->getBody());
+        return $this->httpClient->requestAsync('GET', $url, $options)->then(function ($response) {
+          return (string) $response->getBody();
+        })->then(function ($htmlBody) {
+          return Self::parseResponse($htmlBody);
+        });
+    }
+
+    /**
+     * Parses thepiratebay html response.
+     *
+     * @param string $htmlBody
+     *
+     * @return SearchResult[]
+     */
+    private static function parseResponse($htmlBody)
+    {
+        $crawler = new Crawler($htmlBody);
         $items = $crawler->filter('#searchResult tr');
         $results = [];
         $first = true;
 
         foreach ($items as $item) {
             // Ignore the first row, the header
-            if ($first) {
-                $first = false;
-                continue;
-            }
+          if ($first) {
+              $first = false;
+              continue;
+          }
 
             $result = new SearchResult();
             $itemCrawler = new Crawler($item);

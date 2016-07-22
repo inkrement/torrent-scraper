@@ -2,7 +2,6 @@
 
 namespace Inkrement\TorrentScraper\Adapter;
 
-use GuzzleHttp\Exception\ClientException;
 use Inkrement\TorrentScraper\AdapterInterface;
 use Inkrement\TorrentScraper\HttpClientAware;
 use Inkrement\TorrentScraper\Entity\SearchResult;
@@ -30,17 +29,29 @@ class EzTvAdapter implements AdapterInterface
     /**
      * @param string $query
      *
-     * @return SearchResult[]
+     * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function search($query)
     {
-        try {
-            $response = $this->httpClient->get('https://eztv.ag/search/'.$this->transformSearchString($query));
-        } catch (ClientException $e) {
-            return [];
-        }
+        $url = 'https://eztv.ag/search/'.$this->transformSearchString($query);
 
-        $crawler = new Crawler((string) $response->getBody());
+        return $this->httpClient->requestAsync('GET', $url)->then(function ($response) {
+          return (string) $response->getBody();
+        })->then(function ($htmlBody) {
+          return Self::parseResponse($htmlBody);
+        });
+    }
+
+    /**
+     * Parses eztv html response.
+     *
+     * @param string $htmlBody
+     *
+     * @return SearchResult[]
+     */
+    private static function parseResponse($htmlBody)
+    {
+        $crawler = new Crawler($htmlBody);
         $items = $crawler->filter('tr.forum_header_border');
         $results = [];
 
@@ -48,8 +59,8 @@ class EzTvAdapter implements AdapterInterface
             $result = new SearchResult();
             $itemCrawler = new Crawler($item);
             $result->setName(trim($itemCrawler->filter('td')->eq(1)->text()));
-            $result->setSeeders($this->options['seeders']);
-            $result->setLeechers($this->options['leechers']);
+            //$result->setSeeders($this->options['seeders']);
+            //$result->setLeechers($this->options['leechers']);
 
             $node = $itemCrawler->filter('a.download_1');
             if ($node->count() > 0) {

@@ -2,8 +2,6 @@
 
 namespace Inkrement\TorrentScraper;
 
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Psr7\Request;
 use Inkrement\TorrentScraper\Adapter\ThePirateBayAdapter;
 use Inkrement\TorrentScraper\Entity\SearchResult;
 use GuzzleHttp\Client;
@@ -62,27 +60,9 @@ class ThePirateBayAdapterTest extends \PHPUnit_Framework_TestCase
 
         $expected = [$result1, $result2, $result3];
 
-        $actual = $adapter->search('The Walking Dead S05E08');
+        $actual = $adapter->search('The Walking Dead S05E08')->wait();
 
         $this->assertEquals($expected, $actual);
-    }
-
-    public function testIsHandlingExceptionOnNotFound()
-    {
-        $uri = 'https://thepiratebay.se/search/'.urlencode('The Walking Dead S05E08').'/0/7/0';
-
-        $client = $this->createMock(Client::class);
-        $client->expects($this->once())
-            ->method('__call')
-            ->with('get', [$uri])
-            ->willThrowException(new ClientException('404 Not Found', new Request('GET', $uri)));
-
-        $adapter = new ThePirateBayAdapter();
-        $adapter->setHttpClient($client);
-
-        $actual = $adapter->search('The Walking Dead S05E08');
-
-        $this->assertEquals([], $actual);
     }
 
     protected function getMockRawResult()
@@ -99,7 +79,7 @@ class ThePirateBayAdapterTest extends \PHPUnit_Framework_TestCase
         $adapter = new ThePirateBayAdapter();
         $adapter->setHttpClient(new Client());
 
-        $actual = $adapter->search('Debian');
+        $actual = $adapter->search('Debian')->wait();
 
         $this->assertTrue(count($actual) > 0);
         $this->assertNotEmpty($actual[0]->getName());

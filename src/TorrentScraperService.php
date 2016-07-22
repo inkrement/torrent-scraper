@@ -3,6 +3,7 @@
 namespace Inkrement\TorrentScraper;
 
 use Inkrement\TorrentScraper\Entity\SearchResult;
+use GuzzleHttp\Promise\EachPromise;
 
 class TorrentScraperService
 {
@@ -50,12 +51,19 @@ class TorrentScraperService
      */
     public function search($query)
     {
-        $results = [];
+        $promises = [];
 
         foreach ($this->adapters as $adapter) {
-            $results = array_merge($adapter->search($query), $results);
+            $promises[] = $adapter->search($query);
         }
 
-        return $results;
+        $each = new EachPromise($promises, [
+          'concurrency' => 4,
+          'fulfilled' => function ($responses) {
+               return $responses;
+          },
+        ]);
+
+        $each->promise()->wait();
     }
 }

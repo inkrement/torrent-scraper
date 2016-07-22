@@ -29,6 +29,8 @@ interface AdapterInterface
      * Perform the search.
      *
      * @param string $query
+     *
+     * @return \GuzzleHttp\Promise\PromiseInterface
      */
     public function search($query);
 }
