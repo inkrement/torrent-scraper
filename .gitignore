@@ -1,4 +1,3 @@
-tests/resources
 composer.lock
 vendor/
 composer.phar
