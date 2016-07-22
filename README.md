@@ -2,7 +2,7 @@ Torrent Scraper
 ===============
 
 ## About
-This library provides an abstraction to search for torrent files accross some torrent websites.
+This library provides an abstraction to search for torrent files across some torrent websites.
 
 ## Usage
 
