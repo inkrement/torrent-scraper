@@ -5,6 +5,13 @@ Torrent Scraper
 This library provides an abstraction to search for torrent files accross some torrent websites.
 
 ## Usage
+
+First you have to install it using composer:
+```bash
+composer require inkrement/torrent-scraper
+```
+
+
 ```php
 <?php
 
