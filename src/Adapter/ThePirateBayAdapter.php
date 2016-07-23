@@ -78,13 +78,19 @@ class ThePirateBayAdapter implements AdapterInterface
             $raw = Self::clean($itemCrawler->filterXpath('//font[@class="detDesc"]')->text());
 
             preg_match(Self::INFO_REGEX, $raw, $matches);
-            $year = (empty($matches[4])) ? $matches[3] : '2016';
 
-            if (!empty($matches[1]) && !empty($matches[2])) {
-                $result->setDate(new \DateTime($year.'-'.$matches[1].'-'.$matches[2]));
+            if (count($matches) > 2) {
+                $year = (isset($matches[4])) ? $matches[3] : '2016';
+
+                if (!empty($matches[1]) && !empty($matches[2])) {
+                    $result->setDate(new \DateTime($year.'-'.$matches[1].'-'.$matches[2]));
+                }
             }
 
-            $result->setSize((int) rtrim(\ByteUnits\parse($matches[5])->format('B'), 'B'));
+            if (isset($matches[5])) {
+                $result->setSize((int) rtrim(\ByteUnits\parse($matches[5])->format('B'), 'B'));
+            }
+
             $result->setSeeders((int) $itemCrawler->filter('td')->eq(2)->text());
             $result->setLeechers((int) $itemCrawler->filter('td')->eq(3)->text());
             $result->setMagnetUrl($itemCrawler->filterXpath('//tr/td/a')->attr('href'));
