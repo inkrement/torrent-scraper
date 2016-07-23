@@ -5,7 +5,8 @@ This library is based on [Fernando Carlétti`s](https://github.com/xurumelous/to
 ## Usage
 
 First you have to install it using composer:
-```bash
+
+```shell
 composer require inkrement/torrent-scraper
 ```
 
@@ -28,6 +29,20 @@ foreach ($results as $result) {
     $result->getTorrentUrl();
     $result->getMagnetUrl();
 }
+```
+
+
+### Proxy
+You can pass *Guzzle httpClient* options directly to the adapters.
+
+```php
+$scraperService = new TorrentScraperService();
+
+//add adapter
+$pirateBayAdapter = new ThePirateBayAdapter(['proxy' => 'http://username:password@example.com:3128']);
+$scraperService->addAdapter($pirateBayAdapter);
+
+$result = $scraperService->search('elementaryos');
 ```
 
 ## Available adapters
