@@ -79,7 +79,10 @@ class ThePirateBayAdapter implements AdapterInterface
 
             preg_match(Self::INFO_REGEX, $raw, $matches);
             $year = (empty($matches[4])) ? $matches[3] : '2016';
-            $result->setDate(new \DateTime($year.'-'.$matches[1].'-'.$matches[2]));
+
+            if (!empty($matches[1]) && !empty($matches[2])) {
+                $result->setDate(new \DateTime($year.'-'.$matches[1].'-'.$matches[2]));
+            }
 
             $result->setSize((int) rtrim(\ByteUnits\parse($matches[5])->format('B'), 'B'));
             $result->setSeeders((int) $itemCrawler->filter('td')->eq(2)->text());
