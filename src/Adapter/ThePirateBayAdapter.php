@@ -33,7 +33,7 @@ class ThePirateBayAdapter implements AdapterInterface
 
         return $this->httpClient->requestAsync('GET', $url, $this->options)->then(function ($response) {
           return (string) $response->getBody();
-        })->then(function ($htmlBody) {
+        })->then(function ($htmlBody) use ($query) {
           $response = new TrackerResponse();
           $response->setTracker('thePirateBay');
           $response->setSearchResult(Self::parseResponse($htmlBody));
