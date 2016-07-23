@@ -5,6 +5,7 @@ namespace Inkrement\TorrentScraper\Adapter;
 use Inkrement\TorrentScraper\AdapterInterface;
 use Inkrement\TorrentScraper\HttpClientAware;
 use Inkrement\TorrentScraper\Entity\SearchResult;
+use Inkrement\TorrentScraper\Entity\TrackerResponse;
 use Symfony\Component\DomCrawler\Crawler;
 
 class EzTvAdapter implements AdapterInterface
@@ -35,8 +36,13 @@ class EzTvAdapter implements AdapterInterface
 
         return $this->httpClient->requestAsync('GET', $url, $this->options)->then(function ($response) {
           return (string) $response->getBody();
-        })->then(function ($htmlBody) {
-          return Self::parseResponse($htmlBody);
+        })->then(function ($htmlBody) use ($query) {
+            $response = new TrackerResponse();
+            $response->setTracker('EzTv');
+            $response->setSearchResult(Self::parseResponse($htmlBody));
+            $response->setQuery($query);
+
+          return $response;
         });
     }
 

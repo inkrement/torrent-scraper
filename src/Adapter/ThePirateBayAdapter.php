@@ -5,6 +5,7 @@ namespace Inkrement\TorrentScraper\Adapter;
 use Inkrement\TorrentScraper\AdapterInterface;
 use Inkrement\TorrentScraper\HttpClientAware;
 use Inkrement\TorrentScraper\Entity\SearchResult;
+use Inkrement\TorrentScraper\Entity\TrackerResponse;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ThePirateBayAdapter implements AdapterInterface
@@ -33,7 +34,12 @@ class ThePirateBayAdapter implements AdapterInterface
         return $this->httpClient->requestAsync('GET', $url, $this->options)->then(function ($response) {
           return (string) $response->getBody();
         })->then(function ($htmlBody) {
-          return Self::parseResponse($htmlBody);
+          $response = new TrackerResponse();
+          $response->setTracker('thePirateBay');
+          $response->setSearchResult(Self::parseResponse($htmlBody));
+          $response->setQuery($query);
+
+        return $response;
         });
     }
 

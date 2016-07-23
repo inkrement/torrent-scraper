@@ -2,8 +2,6 @@
 
 namespace Inkrement\TorrentScraper;
 
-use Inkrement\TorrentScraper\Entity\SearchResult;
-
 class TorrentScraperService
 {
     /**
@@ -62,7 +60,7 @@ class TorrentScraperService
     /**
      * @param string $query
      *
-     * @return SearchResult[]
+     * @return TrackerResponse
      */
     public function search($query)
     {

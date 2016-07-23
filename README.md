@@ -22,13 +22,19 @@ date_default_timezone_set('UTC');
 $scraperService = new TorrentScraperService(['ezTv', 'ThePirateBay']);
 $results = $scraperService->search('elementaryos');
 
-foreach ($results as $result) {
-    $result->getName();
-    $result->getSeeders();
-    $result->getLeechers();
-    $result->getTorrentUrl();
-    $result->getMagnetUrl();
+foreach($tracker as $tracker_results){
+  echo $tracker_results->getTracker()."\n";
+
+  foreach ($tracker_results->getSearchResult() as $result) {
+      $result->getName();
+      $result->getSeeders();
+      $result->getLeechers();
+      $result->getTorrentUrl();
+      $result->getMagnetUrl();
+  }
 }
+
+
 ```
 
 
