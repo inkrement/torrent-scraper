@@ -39,6 +39,10 @@ class ThePirateBayAdapterTest extends \PHPUnit_Framework_TestCase
         $adapter->setHttpClient(new Client(['handler' => $mockHandler]));
         $result1 = new SearchResult();
         $result1->setName('elementaryos-beta2-i386.20130506.iso');
+        $result1->setCategory('Programas (Appz)');
+        $result1->setDate(new \DateTime('2013-05-15'));
+        $result1->setSize(679477248);
+        $result1->setUploader('ixcoder');
         $result1->setSeeders(1);
         $result1->setLeechers(0);
         $result1->setTorrentUrl(null);
@@ -46,6 +50,10 @@ class ThePirateBayAdapterTest extends \PHPUnit_Framework_TestCase
 
         $result2 = new SearchResult();
         $result2->setName('elementaryos-beta2-amd64.20130506.iso');
+        $result2->setCategory('Programas (Appz)');
+        $result2->setDate(new \DateTime('2013-05-15'));
+        $result2->setSize(713031680);
+        $result2->setUploader('ixcoder');
         $result2->setSeeders(1);
         $result2->setLeechers(0);
         $result2->setTorrentUrl(null);
@@ -53,6 +61,10 @@ class ThePirateBayAdapterTest extends \PHPUnit_Framework_TestCase
 
         $result3 = new SearchResult();
         $result3->setName('ElementaryOS 64-bit 20130810');
+        $result3->setCategory('Programas (Appz)');
+        $result3->setDate(new \DateTime('2013-11-01'));
+        $result3->setSize(727711744);
+        $result3->setUploader(null);
         $result3->setSeeders(1);
         $result3->setLeechers(0);
         $result3->setTorrentUrl(null);
@@ -62,7 +74,7 @@ class ThePirateBayAdapterTest extends \PHPUnit_Framework_TestCase
 
         $actual = $adapter->search('The Walking Dead S05E08')->wait();
 
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expected, $actual->getSearchResult());
     }
 
     protected function getMockRawResult()

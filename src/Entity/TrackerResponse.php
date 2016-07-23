@@ -20,7 +20,7 @@ class TrackerResponse
     protected $tracker;
 
     /**
-     * @param string $name
+     * @param string $searchResult
      */
     public function setSearchResult($searchResult)
     {
@@ -36,7 +36,7 @@ class TrackerResponse
     }
 
     /**
-     * @param string $name
+     * @param string $query
      */
     public function setQuery($query)
     {
@@ -52,7 +52,7 @@ class TrackerResponse
     }
 
     /**
-     * @param string $name
+     * @param string $tracker
      */
     public function setTracker($tracker)
     {

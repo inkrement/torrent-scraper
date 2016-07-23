@@ -30,6 +30,90 @@ class SearchResult
     protected $magnetUrl;
 
     /**
+     * @var string
+     */
+    protected $category;
+
+    /**
+     * @var string
+     */
+    protected $uploader;
+
+    /**
+     * @var int
+     */
+    protected $size;
+
+    /**
+     * @var DateTime
+     */
+    protected $date;
+
+    /**
+     * @param string $date
+     */
+    public function setDate($date)
+    {
+        $this->date = $date;
+    }
+
+    /**
+     * @return DateTime
+     */
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @param string $uploader
+     */
+    public function setUploader($uploader)
+    {
+        $this->uploader = $uploader;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUploader()
+    {
+        return $this->uploader;
+    }
+
+    /**
+     * @param string $category
+     */
+    public function setCategory($category)
+    {
+        $this->category = $category;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param int $size
+     */
+    public function setSize($size)
+    {
+        $this->size = $size;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+
+    /**
      * @param string $name
      */
     public function setName($name)

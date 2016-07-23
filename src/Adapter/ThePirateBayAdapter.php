@@ -10,6 +10,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ThePirateBayAdapter implements AdapterInterface
 {
+    const INFO_REGEX = '/([0-1][0-9])-([0-3][0-9])(?:&nbsp;| )?([0-9]{4})?([0-2][0-9]:[0-6][0-9])?,[^0-9]*([0-9.]*(?:&nbsp;| )[a-zA-Z]{1,3})/';
     use HttpClientAware;
 
     private $options;
@@ -59,14 +60,28 @@ class ThePirateBayAdapter implements AdapterInterface
 
         foreach ($items as $item) {
             // Ignore the first row, the header
-          if ($first) {
-              $first = false;
-              continue;
-          }
+            if ($first) {
+                $first = false;
+                continue;
+            }
 
             $result = new SearchResult();
             $itemCrawler = new Crawler($item);
             $result->setName(trim($itemCrawler->filter('.detName')->text()));
+            $result->setCategory($itemCrawler->filter('.vertTh a')->first()->text());
+
+            try {
+                $result->setUploader($itemCrawler->filterXpath('//font[@class="detDesc"]/a')->text());
+            } catch (\InvalidArgumentException $e) {
+            }
+
+            $raw = Self::clean($itemCrawler->filterXpath('//font[@class="detDesc"]')->text());
+
+            preg_match(Self::INFO_REGEX, $raw, $matches);
+            $year = (empty($matches[4])) ? $matches[3] : '2016';
+            $result->setDate(new \DateTime($year.'-'.$matches[1].'-'.$matches[2]));
+
+            $result->setSize((int) rtrim(\ByteUnits\parse($matches[5])->format('B'), 'B'));
             $result->setSeeders((int) $itemCrawler->filter('td')->eq(2)->text());
             $result->setLeechers((int) $itemCrawler->filter('td')->eq(3)->text());
             $result->setMagnetUrl($itemCrawler->filterXpath('//tr/td/a')->attr('href'));
@@ -75,5 +90,15 @@ class ThePirateBayAdapter implements AdapterInterface
         }
 
         return $results;
+    }
+
+    private static function clean($str)
+    {
+        $str = utf8_decode($str);
+        $str = str_replace('&nbsp;', '', $str);
+        $str = preg_replace("/\s+/", ' ', $str);
+        $str = trim($str);
+
+        return $str;
     }
 }
