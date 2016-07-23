@@ -43,6 +43,22 @@ class TorrentScraperService
         return $this->adapters;
     }
 
+     /**
+      * @param $string query
+      *
+      * @return \GuzzleHttp\Promise\PromiseInterface
+      */
+     public function asyncSearch($query)
+     {
+         $promises = [];
+
+         foreach ($this->adapters as $adapter) {
+             $promises[] = $adapter->search($query);
+         }
+
+         return \GuzzleHttp\Promise\all($promises);
+     }
+
     /**
      * @param string $query
      *
@@ -50,12 +66,6 @@ class TorrentScraperService
      */
     public function search($query)
     {
-        $promises = [];
-
-        foreach ($this->adapters as $adapter) {
-            $promises[] = $adapter->search($query);
-        }
-
-        return \GuzzleHttp\Promise\all($promises)->wait();
+        return $this->asyncSearch($query)->wait();
     }
 }
