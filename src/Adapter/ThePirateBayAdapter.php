@@ -40,7 +40,7 @@ class ThePirateBayAdapter implements AdapterInterface
           $response->setSearchResult(Self::parseResponse($htmlBody));
           $response->setQuery($query);
 
-        return $response;
+          return $response;
         });
     }
 
@@ -76,21 +76,10 @@ class ThePirateBayAdapter implements AdapterInterface
             }
 
             $raw = Self::clean($itemCrawler->filterXpath('//font[@class="detDesc"]')->text());
+            $parsedDescription = Self::parseDescription($raw);
 
-            preg_match(Self::INFO_REGEX, $raw, $matches);
-
-            if (count($matches) > 2) {
-                $year = (isset($matches[4])) ? $matches[3] : '2016';
-
-                if (!empty($matches[1]) && !empty($matches[2])) {
-                    $result->setDate(new \DateTime($year.'-'.$matches[1].'-'.$matches[2]));
-                }
-            }
-
-            if (isset($matches[5])) {
-                $result->setSize((int) rtrim(\ByteUnits\parse($matches[5])->format('B'), 'B'));
-            }
-
+            $result->setSize($parsedDescription['bytes']);
+            $result->setDate($parsedDescription['date']);
             $result->setSeeders((int) $itemCrawler->filter('td')->eq(2)->text());
             $result->setLeechers((int) $itemCrawler->filter('td')->eq(3)->text());
             $result->setMagnetUrl($itemCrawler->filterXpath('//tr/td/a')->attr('href'));
@@ -99,6 +88,23 @@ class ThePirateBayAdapter implements AdapterInterface
         }
 
         return $results;
+    }
+
+    public static function parseDescription($string)
+    {
+        $values = ['date' => null, 'bytes' => null];
+
+        if (preg_match(Self::INFO_REGEX, $string, $matches)) {
+            $year = $matches[3] ?: date('Y');
+            $month = (int) $matches[1];
+            $day = (int) $matches[2];
+            $size_raw = $matches[5];
+
+            $values['date'] = new \DateTime($year.'-'.$month.'-'.$day);
+            $values['bytes'] = (!empty($size_raw)) ? (int) rtrim(\ByteUnits\parse($size_raw)->format('B'), 'B') : null;
+        }
+
+        return $values;
     }
 
     private static function clean($str)

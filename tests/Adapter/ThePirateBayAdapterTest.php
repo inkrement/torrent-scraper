@@ -77,6 +77,21 @@ class ThePirateBayAdapterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual->getSearchResult());
     }
 
+    public function testParseDescription()
+    {
+        $input1 = 'Enviado 05-15 2013, Tamanho de 680 MiB, UP por ';
+        $input2 = 'Enviado 11-01 2013, Tamanho de 694 MiB, UP por';
+        $input3 = 'Enviado 10-02 11:12, Tamanho de 720 MiB, UP por';
+
+        $result1 = ThePirateBayAdapter::parseDescription($input1);
+        $result2 = ThePirateBayAdapter::parseDescription($input2);
+        $result3 = ThePirateBayAdapter::parseDescription($input3);
+
+        $this->assertEquals(['date' => new \DateTime('2013-05-15'), 'bytes' => 713031680], $result1);
+        $this->assertEquals(['date' => new \DateTime('2013-11-01'), 'bytes' => 727711744], $result2);
+        $this->assertEquals(['date' => new \DateTime('2016-10-02'), 'bytes' => 754974720], $result3);
+    }
+
     protected function getMockRawResult()
     {
         if (!$this->rawResultCache) {
