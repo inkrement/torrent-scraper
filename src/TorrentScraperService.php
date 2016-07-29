@@ -52,4 +52,18 @@ class TorrentScraperService
              yield $adapter->search($query);
          }
      }
+
+     /**
+      * @param $string query
+      *
+      * @return \GuzzleHttp\Promise\PromiseInterface
+      */
+     public function searchArray(array $queries)
+     {
+         foreach ($queries as $query) {
+             foreach ($this->adapters as $adapter) {
+                 yield $adapter->search($query);
+             }
+         }
+     }
 }
