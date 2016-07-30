@@ -10,7 +10,6 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ThePirateBayAdapter implements AdapterInterface
 {
-    const INFO_REGEX = '/([0-1][0-9])-([0-3][0-9])(?:&nbsp;| )?([0-9]{4})?([0-2][0-9]:[0-6][0-9])?,[^0-9]*([0-9.]*(?:&nbsp;| )[a-zA-Z]{1,3})/';
     use HttpClientAware;
 
     private $options;
@@ -56,55 +55,41 @@ class ThePirateBayAdapter implements AdapterInterface
         $crawler = new Crawler($htmlBody);
         $items = $crawler->filter('#searchResult tr');
         $results = [];
-        $first = true;
+        $header = true;
 
         foreach ($items as $item) {
-            // Ignore the first row, the header
-            if ($first) {
-                $first = false;
+            if ($header) {
+                $header = false;
                 continue;
             }
-
             $result = new SearchResult();
             $itemCrawler = new Crawler($item);
-            $result->setName(trim($itemCrawler->filter('.detName')->text()));
-            $result->setCategory($itemCrawler->filter('.vertTh a')->first()->text());
+
+            $result->setName(trim($itemCrawler->filter('td')->eq(1)->text()));
+            $result->setCategory($itemCrawler->filter('td')->eq(0)->text());
+            $datetime = Self::clean($itemCrawler->filter('td')->eq(2)->text());
+
+            //Hack: replace time with current year. So the test will fail next year
+            $datetime = (strpos($datetime, ':') !== false) ? substr($datetime, 0, 6).date('Y') : $datetime;
+            $result->setDate(\DateTime::createFromFormat('m-d Y h:m', $datetime.' 00:00'));
 
             try {
-                $result->setUploader($itemCrawler->filterXpath('//font[@class="detDesc"]/a')->text());
+                $result->setUploader($itemCrawler->filter('td')->eq(7)->filter('a')->text());
             } catch (\InvalidArgumentException $e) {
             }
 
-            $raw = Self::clean($itemCrawler->filterXpath('//font[@class="detDesc"]')->text());
-            $parsedDescription = Self::parseDescription($raw);
+            $size_raw = Self::clean($itemCrawler->filter('td')->eq(4)->text());
+            $result->setSize((int) rtrim(\ByteUnits\parse($size_raw)->format('B'), 'B'));
 
-            $result->setSize($parsedDescription['bytes']);
-            $result->setDate($parsedDescription['date']);
-            $result->setSeeders((int) $itemCrawler->filter('td')->eq(2)->text());
-            $result->setLeechers((int) $itemCrawler->filter('td')->eq(3)->text());
-            $result->setMagnetUrl($itemCrawler->filterXpath('//tr/td/a')->attr('href'));
+            $result->setSeeders((int) $itemCrawler->filter('td')->eq(5)->text());
+            $result->setLeechers((int) $itemCrawler->filter('td')->eq(6)->text());
+            $result->setMagnetUrl($itemCrawler->filter('td')->eq(3)->filter('a')->attr('href'));
+            $result->setTorrentUrl($itemCrawler->filter('td')->eq(1)->filter('a')->attr('href'));
 
             $results[] = $result;
         }
 
         return $results;
-    }
-
-    public static function parseDescription($string)
-    {
-        $values = ['date' => null, 'bytes' => null];
-
-        if (preg_match(Self::INFO_REGEX, $string, $matches)) {
-            $year = $matches[3] ?: date('Y');
-            $month = (int) $matches[1];
-            $day = (int) $matches[2];
-            $size_raw = $matches[5];
-
-            $values['date'] = new \DateTime($year.'-'.$month.'-'.$day);
-            $values['bytes'] = (!empty($size_raw)) ? (int) rtrim(\ByteUnits\parse($size_raw)->format('B'), 'B') : null;
-        }
-
-        return $values;
     }
 
     private static function clean($str)
@@ -115,5 +100,29 @@ class ThePirateBayAdapter implements AdapterInterface
         $str = trim($str);
 
         return $str;
+    }
+
+    public static function bytes($bytes, $force_unit = null, $format = null, $si = true)
+    {
+        // Format string
+    $format = ($format === null) ? '%01.2f %s' : (string) $format;
+
+    // IEC prefixes (binary)
+    if ($si == false or strpos($force_unit, 'i') !== false) {
+        $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB');
+        $mod = 1024;
+    }
+    // SI prefixes (decimal)
+    else {
+        $units = array('B', 'kB', 'MB', 'GB', 'TB', 'PB');
+        $mod = 1000;
+    }
+
+    // Determine unit to use
+    if (($power = array_search((string) $force_unit, $units)) === false) {
+        $power = ($bytes > 0) ? floor(log($bytes, $mod)) : 0;
+    }
+
+        return sprintf($format, $bytes / pow($mod, $power), $units[$power]);
     }
 }
