@@ -67,11 +67,14 @@ class ThePirateBayAdapter implements AdapterInterface
 
             $result->setName(trim($itemCrawler->filter('td')->eq(1)->text()));
             $result->setCategory($itemCrawler->filter('td')->eq(0)->text());
-            $datetime = Self::clean($itemCrawler->filter('td')->eq(2)->text());
 
             //Hack: replace time with current year. So the test will fail next year
-            $datetime = (strpos($datetime, ':') !== false) ? substr($datetime, 0, 6).date('Y') : $datetime;
-            $result->setDate(\DateTime::createFromFormat('m-d Y h:m', $datetime.' 00:00'));
+            $date_raw = Self::clean($itemCrawler->filter('td')->eq(2)->text());
+            $date_raw = (strpos($date_raw, ':') !== false) ? substr($date_raw, 0, 6).date('Y') : $date_raw;
+            $datetime = \DateTime::createFromFormat('m-d Y h:m', $date_raw.' 00:00');
+            if ($datetime !== false) {
+                $result->setDate($datetime);
+            }
 
             try {
                 $result->setUploader($itemCrawler->filter('td')->eq(7)->filter('a')->text());
