@@ -50,6 +50,27 @@ class SearchResult
     protected $date;
 
     /**
+     * @var string
+     */
+    protected $torrent_hash;
+
+    /**
+     * @return string
+     */
+    public function getTorrentHash()
+    {
+        return $this->torrent_hash;
+    }
+
+    /**
+     * @param string $torrent_hash
+     */
+    public function setTorrentHash($torrent_hash)
+    {
+        $this->torrent_hash = $torrent_hash;
+    }
+
+    /**
      * @param string $date
      */
     public function setDate($date)
