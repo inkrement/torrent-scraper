@@ -54,3 +54,4 @@ $result = $scraperService->search('elementaryos');
 ## Available adapters
 * [ezTv](https://eztv.ag/)
 * [thePirateBay](http://thepiratebay.se)
+* [TorrentProject](http://torrentproject.se)
