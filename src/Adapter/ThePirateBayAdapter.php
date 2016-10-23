@@ -65,29 +65,32 @@ class ThePirateBayAdapter implements AdapterInterface
             $result = new SearchResult();
             $itemCrawler = new Crawler($item);
 
-            $result->setName(trim($itemCrawler->filter('td')->eq(1)->text()));
-            $result->setCategory($itemCrawler->filter('td')->eq(0)->text());
+            try {
+              $row = $itemCrawler->filter('td');
+              
+              $result->setCategory($row->eq(0)->text());
+              $result->setName(trim($row->eq(1)->text()));
+              $result->setTorrentUrl($row->eq(1)->filter('a')->attr('href'));
 
-            //Hack: replace time with current year. So the test will fail next year
-            $date_raw = Self::clean($itemCrawler->filter('td')->eq(2)->text());
-            $date_raw = (strpos($date_raw, ':') !== false) ? substr($date_raw, 0, 6).date('Y') : $date_raw;
-            $datetime = \DateTime::createFromFormat('m-d Y h:m', $date_raw.' 00:00');
-            if ($datetime !== false) {
-                $result->setDate($datetime);
+              //Hack: replace time with current year. So the test will fail next year
+              $date_raw = Self::clean($row->eq(2)->text());
+              $date_raw = (strpos($date_raw, ':') !== false) ? substr($date_raw, 0, 6).date('Y') : $date_raw;
+              $datetime = \DateTime::createFromFormat('m-d Y h:m', $date_raw.' 00:00');
+              if ($datetime !== false) {
+                  $result->setDate($datetime);
+              }
+
+              $result->setMagnetUrl($row->eq(3)->filter('a')->attr('href'));
+
+              $size_raw = Self::clean($row->eq(4)->text());
+              $result->setSize((int) rtrim(\ByteUnits\parse($size_raw)->format('B'), 'B'));
+
+              $result->setSeeders((int) $row->eq(5)->text());
+              $result->setLeechers((int) $row->eq(6)->text());
+              $result->setUploader($row->eq(7)->filter('a')->text());
+
+            } catch(\InvalidArgumentException $e){
             }
-
-            try {
-                $result->setUploader($itemCrawler->filter('td')->eq(7)->filter('a')->text());
-            } catch (\InvalidArgumentException $e) {
-            }
-
-            $size_raw = Self::clean($itemCrawler->filter('td')->eq(4)->text());
-            $result->setSize((int) rtrim(\ByteUnits\parse($size_raw)->format('B'), 'B'));
-
-            $result->setSeeders((int) $itemCrawler->filter('td')->eq(5)->text());
-            $result->setLeechers((int) $itemCrawler->filter('td')->eq(6)->text());
-            $result->setMagnetUrl($itemCrawler->filter('td')->eq(3)->filter('a')->attr('href'));
-            $result->setTorrentUrl($itemCrawler->filter('td')->eq(1)->filter('a')->attr('href'));
 
             $results[] = $result;
         }
