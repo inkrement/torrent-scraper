@@ -65,9 +65,9 @@ class ThePirateBayAdapter implements AdapterInterface
             $result = new SearchResult();
             $itemCrawler = new Crawler($item);
 
-            try {
+            try {
               $row = $itemCrawler->filter('td');
-              
+
               $result->setCategory($row->eq(0)->text());
               $result->setName(trim($row->eq(1)->text()));
               $result->setTorrentUrl($row->eq(1)->filter('a')->attr('href'));
